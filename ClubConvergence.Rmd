@@ -1,0 +1,89 @@
+---
+
+title: "Club Convergence"
+output: 
+  html_notebook:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    toc_depth: 4
+    number_sections: true
+    code_folding: "hide"
+    theme: "cosmo"
+    highlight: "monochrome"
+---
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+# Install and load the latest version of the follwing packages'
+library(devtools)
+library(tidyverse)
+library(xtable)
+library(knitr)
+library(ExPanDaR)
+library(plotly)
+library(tidyverse)
+library(REAT)
+install.packages("ConvergenceClubs")
+library(ConvergenceClubs)
+
+# Change the presentation of decimal numbers to 4 and avoid scientific notation
+options(prompt="R> ", digits=2, scipen=999)
+```
+
+```{r}
+library(readr)
+Data_ConvergenceClubs <- read_csv("~/Desktop/ClubConvergence/Club Convergence.csv")
+Data_ConvergenceClubs <- as.data.frame(Data_ConvergenceClubs)
+Data_ConvergenceClubs
+```
+
+```{r}
+dim(Data_ConvergenceClubs)
+```
+
+
+```{r}
+library(ConvergenceClubs)
+clubs <- findClubs(Data_ConvergenceClubs,  dataCols=2:29, unit_names = 1, refCol=29, time_trim = 1/3, cstar = 0, HACmethod = "AQSB")
+summary(clubs)
+print(clubs)
+```
+
+```{r}
+mclubs <- mergeClubs(clubs, mergeMethod='PS', mergeDivergent=FALSE)
+summary(mclubs)
+print(mclubs)
+```
+
+```{r}
+mclubs <- mergeClubs(clubs, mergeMethod='vLT', mergeDivergent=FALSE)
+summary(mclubs)
+print(mclubs)
+```
+
+
+```{r}
+plot(mclubs, clubs = c(1), avgTP = FALSE)
+plot(mclubs, clubs = c(2), avgTP = FALSE)
+plot(clubs, clubs=NULL, avgTP = TRUE, legend=TRUE)
+```
+
+```{r}
+library(readr)
+Data_CV <- read_csv("~/Desktop/ClubConvergence/Club_Convergence_Log.csv")
+Data_CV <- as.data.frame(Data_CV)
+Data_CV
+```
+
+
+```{r}
+cvs <- apply(Data_CV[2:36], MARGIN=2, FUN=cv)
+years <- 1983:2017
+plot(years, cvs, "l", ylim=c(0.02,0.06), xlab="year", ylab="CV of Per Capita GDP")
+```
+
+
+
+
